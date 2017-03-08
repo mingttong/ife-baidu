@@ -1,0 +1,57 @@
+@charset "utf-8";
+
+ul {
+  margin: 0;
+  padding: 0;
+}
+
+li {
+  list-style: none;
+}
+
+.flex-con {
+
+  // 先创建一个flex内容
+  display: flex;
+
+  //flex-flow: row wrap;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  justify-content: space-between;
+  align-items: center;
+
+  @media screen and (max-width: 640px) {
+    align-items: flex-start;
+    .flex-item:nth-child(1) {
+      order: 2;
+    }
+    .flex-item:nth-child(2) {
+      order: 3;
+    }
+    .flex-item:nth-child(3) {
+      order: 4;
+    }
+    .flex-item:last-child {
+      order: 1;
+    }
+  ;
+  }
+
+}
+
+
+
+.flex-item {
+  background: tomato;
+  width: 150px;
+  height: 150px;
+  //margin: auto;
+  //margin-top: 10px;
+
+  line-height: 150px;
+  color: #fff;
+  font-weight: bold;
+  font-size: 2.5em;
+  text-align: center;
+}

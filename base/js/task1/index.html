@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8"/>
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+<body>
+
+<label>请输入北京今天空气质量：<input id="aqi-input" type="text"></label>
+<button id="button">确认填写</button>
+
+<div>您输入的值是：<span id="aqi-display">尚无录入</span></div>
+
+<div class="outer">
+    <div class="inner"><a href="#"><em>选我__</em>啊__</a></div>
+</div>
+<div class="outer">
+    <div class="inner"><a href="#"><em>选我__</em>啊__</a></div>
+</div>
+<div class="outer">
+    <div class="inner"><a href="#"><em>选我__</em>啊__</a></div>
+</div>
+<div class="outer">
+    <div class="inner"><a href="#"><em>选我__</em>啊__</a></div>
+</div>
+<div class="outer">
+    <div class="inner"><a href="#"><em>选我__</em>啊__</a></div>
+</div>
+
+<script type="text/javascript">
+
+    (function() {
+
+        var outers = document.querySelectorAll('.outer');
+
+        for (var i = 0; i < outers.length; i += 1) {
+            var title = outers[i].querySelector('.inner').textContent;
+            console.log(title);
+        }
+
+        if (!0) {
+            console.log('1111111111111111');
+        }
+
+    }());
+
+    (function() {
+        /*
+         在注释下方写下代码
+         给按钮button绑定一个点击事件
+         在事件处理函数中
+         获取aqi-input输入的值，并显示在aqi-display中
+         */
+
+        var aqi_ipt = document.getElementById("aqi-input"),
+                button = document.getElementById("button"),
+                aqi_dis = document.getElementById("aqi-display")
+        ;
+
+        // 添加事件的方法
+        var addHandler = function (element, type, handler) {
+
+            if (element.addEventListener) {
+                element.addEventListener(type, handler);
+            } else if (element.attachEvent) {
+                element.attachEvent("on" + type, handler);
+            } else {
+                element["on" + type] = handler;
+            }
+        };
+
+        addHandler(button, "click", function () {
+            aqi_dis.textContent = aqi_ipt.value;
+        })
+
+    })();
+
+    (function() {
+
+        var timer = setInterval(function() {
+
+            console.log(document.readyState);
+            if (document.readyState === 'complete') {
+                console.log(document.readyState);
+
+                clearInterval(timer);
+            }
+
+        }, 10);
+
+    }());
+
+</script>
+</body>
+</html>

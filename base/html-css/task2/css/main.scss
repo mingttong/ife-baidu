@@ -1,0 +1,150 @@
+@charset "utf-8";
+
+$link-color: #fff;
+$link-color-visited: #fff;
+$body-bg: url(http://mingttong.com/picture/common/bg.jpg) repeat 0 0;
+$h-bg-color: #424242;
+$f-bg-color: #424242;
+$site-title-color: #fff;
+$article-bg-color: #fff;
+$text-color: #2f2f2f;
+$second-title-color: #ccc;
+$ps-title-color: #d6d6d6;
+$box-shadow: 0 3px 10px rgba(10, 10, 10, 0.8);
+$one-third: 33.3333333%;
+$two-third: 66.6666666%;
+$gap-lr: 200px;
+$gap-tb: 30px;
+
+body {
+  background: $body-bg;
+  color: $text-color;
+}
+
+.wrap {
+  margin: 0 $gap-lr;
+}
+
+header {
+  width: 100%;
+  background: $h-bg-color;
+  color: $site-title-color;
+
+  a {
+    text-decoration: none;
+    color: $link-color;
+
+    &:visited {
+      color: $link-color-visited;
+    }
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  h1 {
+    text-align: left;
+    margin: 0;
+    line-height: 78px;
+
+  }
+
+  nav {
+    ul {
+      text-align: right;
+      line-height: 78px;
+      margin: 0;
+
+      li {
+        list-style: none;
+        display: inline-block;
+        text-align: right;
+      }
+    }
+  }
+
+}
+
+article {
+  background-color: $article-bg-color;
+  margin: $gap-tb $gap-lr;
+  padding: $gap-tb;
+  -webkit-box-shadow: $box-shadow;
+  -moz-box-shadow: $box-shadow;
+  box-shadow: $box-shadow;
+
+  h3 {
+    color: $second-title-color;
+  }
+
+  h5 {
+    color: $ps-title-color;
+    font-weight: 400;
+  }
+
+  li {
+    list-style-type: none;
+  }
+}
+
+$gap-inside: 10px;
+
+.img-list {
+
+  blockquote {
+
+    >div {
+      border: 1px solid #ccc;
+      width: 150px;
+      padding: $gap-inside;
+      margin: 20px 20px 20px 0;
+
+      >div {
+        width: 80px;
+        margin: 0 auto $gap-inside;
+      }
+
+      img {
+        width: 100%;
+      }
+    }
+  }
+}
+
+$radius: 10px;
+
+.sidebar {
+  background-color: $article-bg-color;
+  margin: $gap-tb $gap-lr;
+  padding: 10px 20px;
+  -webkit-box-shadow: $box-shadow;
+  -moz-box-shadow: $box-shadow;
+  box-shadow: $box-shadow;
+
+  h3 {
+    padding: 10px 0 10px 15px;
+    border-left: 3px #ccc solid;
+  }
+
+  form {
+    .submit {
+      background-color: #1c6bd1;
+      color: #fff;
+      width: 100%;
+      height: 40px;
+      border: none;
+      -webkit-border-radius: $radius;
+      -moz-border-radius: $radius;
+      border-radius: $radius;
+    }
+  }
+}
+
+footer {
+  width: 100%;
+  background-color: $f-bg-color;
+  text-align: center;
+  color: #fff;
+  padding: 20px 20px 40px 20px;
+}
+
