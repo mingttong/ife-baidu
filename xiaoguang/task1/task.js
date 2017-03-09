@@ -21,19 +21,23 @@
 var page = require('webpage').create(),
     system = require('system'),
     address = 'http://baidu.com',
-    jsonReturnObj = { code: 0},
+    jsonReturnObj = {code: 0},
     jsonReturnStr,
     word = '秋瓷炫',
     err,
     time = 2000,
     dataList = [];
 
-// 中文编码
-phantom.outputEncoding = 'gbk';
+function trim(key, value) {
 
-page.onConsoleMessage = function(mes) {
-    console.log(mes);
-};
+    if (key === 'info' && typeof value === 'string' && value !== 'no info') {
+        return value.replace(/\s/g, '');
+    }
+    return value;
+}
+
+// 中文编码
+//phantom.outputEncoding = 'gbk';
 
 page.open(address, function(status) {
 
@@ -128,7 +132,8 @@ page.open(address, function(status) {
                 jsonReturnObj.err = 'FAIL catch fail';
             }
 
-            jsonReturnStr = JSON.stringify(jsonReturnObj);
+            // 顺便美化一下JSON的输出
+            jsonReturnStr = JSON.stringify(jsonReturnObj, trim, 2);
             console.log(jsonReturnStr);
             phantom.exit();
 

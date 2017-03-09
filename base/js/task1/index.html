@@ -31,21 +31,6 @@
 <script type="text/javascript">
 
     (function() {
-
-        var outers = document.querySelectorAll('.outer');
-
-        for (var i = 0; i < outers.length; i += 1) {
-            var title = outers[i].querySelector('.inner').textContent;
-            console.log(title);
-        }
-
-        if (!0) {
-            console.log('1111111111111111');
-        }
-
-    }());
-
-    (function() {
         /*
          在注释下方写下代码
          给按钮button绑定一个点击事件
@@ -76,6 +61,10 @@
 
     })();
 
+
+    /***************************************************
+     * 请无视一下代码
+     */
     (function() {
 
         var timer = setInterval(function() {
@@ -88,6 +77,23 @@
             }
 
         }, 10);
+
+    }());
+
+    (function() {
+
+        function trim(key, value) {
+
+            if (typeof value === 'string') {
+                return value.replace(/\s/g, '');
+            }
+            return value;
+        }
+
+        var str = ' k3j4k24j j34 j  2j4lk23j23ji4jj    rjljr  r wj rirjrj  ';
+        str = trim('1', str);
+
+        console.log(str);
 
     }());
 
