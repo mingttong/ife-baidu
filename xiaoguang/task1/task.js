@@ -21,31 +21,41 @@
 var page = require('webpage').create(),
     system = require('system'),
     address = 'http://baidu.com',
-    jsonReturnObj = {code: 0},
-    jsonReturnStr,
+
+    // 加载时间
+    loadTime = 2000,
+
+    // 返回结果信息
+    result_json = {code: 0},
     word = '秋瓷炫',
     err,
-    time = 2000,
+    time,
     dataList = [];
 
+// 删除掉数据中的空格
 function trim(key, value) {
 
-    if (key === 'info' && typeof value === 'string' && value !== 'no info') {
+    /**
+     * 检查索引为info和title的
+     * 并且类型为字符串的
+     * 并且不是no info 和 no title的
+     */
+    if ((typeof value === 'string' && key === 'info' && value !== 'no info' || key === 'title' && key !== 'no title')) {
         return value.replace(/\s/g, '');
     }
     return value;
 }
 
 // 中文编码
-//phantom.outputEncoding = 'gbk';
+phantom.outputEncoding = 'gbk';
 
 page.open(address, function(status) {
 
     if (status !== 'success') {
 
         err = 'FAIL to load the address';
-        jsonReturnObj.err = err;
-        jsonReturnStr = JSON.stringify(jsonReturnObj);
+        result_json.err = err;
+        jsonReturnStr = JSON.stringify(result_json);
         phantom.exit();
 
     } else {
@@ -119,7 +129,7 @@ page.open(address, function(status) {
 
             if (dataList) {
 
-                jsonReturnObj = {
+                result_json = {
                     code: 1,
                     msg: '抓取成功',
                     word: word,
@@ -129,15 +139,18 @@ page.open(address, function(status) {
 
             } else {
 
-                jsonReturnObj.err = 'FAIL catch fail';
+                result_json.err = 'FAIL catch fail';
             }
 
             // 顺便美化一下JSON的输出
-            jsonReturnStr = JSON.stringify(jsonReturnObj, trim, 2);
-            console.log(jsonReturnStr);
+            console.log(JSON.stringify(result_json, trim, 4));
             phantom.exit();
 
-        }, time);
+        }, loadTime);
 
     }
 });
+
+page.onConsoleMessage = function(mes) {
+    console.log(mes);
+};
