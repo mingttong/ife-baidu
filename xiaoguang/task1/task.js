@@ -4,7 +4,7 @@
 
 /**
  * 几个问题：
- * 1. 如何获取关键字更好？关键字是传入到evaluate中的吗？
+ * 1. 如何获取关键字更好？关键字是传入到evaluate中的吗？===>evaluate可以传参数进去，并且可以传递多个
  * 2. 获取到的数据如何展示更好
  * 3. 整个逻辑有没有问题
  * 4. 如果没找到结果，怎么处理（在evaluate()中？）？
@@ -23,13 +23,17 @@ var page = require('webpage').create(),
     address = 'http://baidu.com',
     jsonReturnObj = { code: 0},
     jsonReturnStr,
-    word,
+    word = '秋瓷炫',
     err,
     time = 2000,
     dataList = [];
 
 // 中文编码
-phantom.outputEncoding = 'utf-8';
+phantom.outputEncoding = 'gbk';
+
+page.onConsoleMessage = function(mes) {
+    console.log(mes);
+};
 
 page.open(address, function(status) {
 
@@ -43,20 +47,22 @@ page.open(address, function(status) {
     } else {
 
         // 输入关键字并跳转
-        word = page.evaluate(function() {
+        page.evaluate(function(word) {
 
             var suButton = document.querySelector('#su'),
                 kwInput = document.querySelector('#kw'),
-                kw = '李彦宏';
+                kw = word;
 
             kwInput.value = kw;
             suButton.click();
 
             return kw;
-        });
+        }, word);
 
+        // 等待
         var clock = setTimeout(function() {
 
+            page.render('img/bd.png');
             dataList = page.evaluate(function() {
 
                 var results = document.querySelectorAll('.c-container'),
