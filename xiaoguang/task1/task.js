@@ -5,9 +5,9 @@
 /**
  * 几个问题：
  * 1. 如何获取关键字更好？关键字是传入到evaluate中的吗？===>evaluate可以传参数进去，并且可以传递多个
- * 2. 获取到的数据如何展示更好
- * 3. 整个逻辑有没有问题
- * 4. 如果没找到结果，怎么处理（在evaluate()中？）？
+ * 2. 获取到的数据如何展示更好 ===>转换为字符串时添加参数JSON.stringify(result_json, null, 4)
+ * 3. 整个逻辑有没有问题 ===>目前没发现
+ * 4. 如果没找到结果，怎么处理（在evaluate()中？）？ ===>结果为null，则错误退出
  */
 
 /**
@@ -22,15 +22,25 @@ var page = require('webpage').create(),
     system = require('system'),
     address = 'http://baidu.com',
 
+    // 限制时间，在限制时间内没加载出来则退出
+    limitTime = 20000,
+
     // 加载时间
     loadTime = 2000,
 
     // 返回结果信息
     result_json = {code: 0},
-    word = '秋瓷炫',
-    err,
+    word,
     time,
     dataList = [];
+
+// 错误退出
+function errExit(err) {
+
+    result_json.err = err;
+    console.log(JSON.stringify(result_json, null, 4));
+    phantom.exit();
+}
 
 // 删除掉数据中的空格
 function trim(key, value) {
@@ -46,17 +56,35 @@ function trim(key, value) {
     return value;
 }
 
-// 中文编码
-phantom.outputEncoding = 'gbk';
+// 检查参数
+if (system.args.length === 1) {
+
+    errExit('Usage: loadspeed.js <some URL>');
+
+} else {
+
+    word = system.args[1];
+}
+
+// 设置限制时间
+setTimeout(function() {
+
+    errExit('FAIL to load the address. Timeout!');
+
+}, limitTime);
+
+// 中文编码，视控制台编码而定
+//phantom.outputEncoding = 'gbk';
+
+// 开始计时
+time = Date.now();
 
 page.open(address, function(status) {
 
+    // 如果无法访问到页面，则报错退出
     if (status !== 'success') {
 
-        err = 'FAIL to load the address';
-        result_json.err = err;
-        jsonReturnStr = JSON.stringify(result_json);
-        phantom.exit();
+        errExit('FAIL to load the address');
 
     } else {
 
@@ -64,19 +92,16 @@ page.open(address, function(status) {
         page.evaluate(function(word) {
 
             var suButton = document.querySelector('#su'),
-                kwInput = document.querySelector('#kw'),
-                kw = word;
+                kwInput = document.querySelector('#kw');
 
-            kwInput.value = kw;
+            kwInput.value = word;
             suButton.click();
 
-            return kw;
         }, word);
 
         // 等待
-        var clock = setTimeout(function() {
+        setTimeout(function() {
 
-            page.render('img/bd.png');
             dataList = page.evaluate(function() {
 
                 var results = document.querySelectorAll('.c-container'),
@@ -127,6 +152,10 @@ page.open(address, function(status) {
 
             });
 
+            // 计时停止
+            time = Date.now() - time;
+
+            // 检查抓取的结果
             if (dataList) {
 
                 result_json = {
@@ -139,18 +168,20 @@ page.open(address, function(status) {
 
             } else {
 
-                result_json.err = 'FAIL catch fail';
+                errExit('FAIL to catch data');
             }
 
+            // 来张照片
+            page.render('result/' + word + '.png');
             // 顺便美化一下JSON的输出
             console.log(JSON.stringify(result_json, trim, 4));
             phantom.exit();
 
-        }, loadTime);
+        }, loadTime); // setTimeout
 
     }
-});
+}); // page.open
 
-page.onConsoleMessage = function(mes) {
-    console.log(mes);
-};
+//page.onConsoleMessage = function(mes) {
+//    console.log(mes);
+//};
