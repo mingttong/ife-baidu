@@ -2,22 +2,6 @@
  * Created by zhouwunan on 2017/3/7.
  */
 
-/**
- * 几个问题：
- * 1. 如何获取关键字更好？关键字是传入到evaluate中的吗？===>evaluate可以传参数进去，并且可以传递多个
- * 2. 获取到的数据如何展示更好 ===>转换为字符串时添加参数JSON.stringify(result_json, null, 4)
- * 3. 整个逻辑有没有问题 ===>目前没发现
- * 4. 如果没找到结果，怎么处理（在evaluate()中？）？ ===>结果为null，则错误退出
- */
-
-/**
- * 有几个信息要获取：
- * 1. title ----> selector: h3.t // 结果条目的标题
- * 2. info -----> selector: .c-abstract // 摘要
- * 3. link -----> selector: h3.t a // 链接
- * 4. pic  -----> selector: img // 缩略图地址
-  */
-
 var page = require('webpage').create(),
     system = require('system'),
     address = 'http://baidu.com',
