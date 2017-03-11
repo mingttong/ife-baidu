@@ -100,6 +100,17 @@
 
     console.log($('.sks').length)
 
+    (function() {
+
+        var toString = Object.prototype.toString;
+
+        var button = document.querySelectorAll('#button');
+        console.log(Object.prototype.toString.call(button[0]));
+
+        console.log(toString.call(null));
+
+    }());
+
 </script>
 </body>
 </html>
