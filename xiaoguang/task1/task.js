@@ -12,10 +12,10 @@
 
 /**
  * 有几个信息要获取：
- * 1. title ----> selector: h3.t // 结果条目的标题
- * 2. info -----> selector: .c-abstract // 摘要
- * 3. link -----> selector: h3.t a // 链接
- * 4. pic  -----> selector: img // 缩略图地址
+ * 1. title ---> 'h3'
+ * 2. info  ---> 'div'
+ * 3. link  ---> 'a'
+ * 4. pic   ---> 'img'
   */
 
 var page = require('webpage').create(),
@@ -82,7 +82,7 @@ setTimeout(function() {
 }, limitTime);
 
 // 中文编码，视控制台编码而定
-//phantom.outputEncoding = 'gbk';
+phantom.outputEncoding = 'gbk';
 
 // 开始计时
 time = Date.now();
@@ -129,19 +129,9 @@ page.open(address, function(status) {
                 for (i = 0; i < results.length; i += 1) {
                     // 当前结果元素下
 
-                    // 是否存在标题，不存在则title = 'no title'
-                    title = results[i].querySelector('.t') ? results[i].querySelector('.t').textContent : 'no title';
-
-                    // 先检查按类名 '.c-abstract'是否可以找到该元素，如果找不到，则试着按类名 '.c-span-last' 查找
-                    // 如果还找不到，则 info = 'no-info'
-                    info = results[i].querySelector('.c-abstract') ? results[i].querySelector('.c-abstract').textContent
-                        : results[i].querySelector('.c-span-last')? results[i].querySelector('.c-span-last').textContent
-                        : 'no info';
-
-                    // 检查连接是否存在，不存在则link = 'no link'
-                    link = results[i].querySelector('.t a') ? results[i].querySelector('.t a').getAttribute('href') : 'no link';
-
-                    // 检查图片是否存在，不存在则pic = 'no pic'
+                    title = results[i].querySelector('h3') ? results[i].querySelector('h3').textContent : 'no title';
+                    info = results[i].querySelector('div') ? results[i].querySelector('div').textContent : 'no info';
+                    link = results[i].querySelector('a') ? results[i].querySelector('a').getAttribute('href') : 'no link';
                     pic = results[i].querySelector('img') ? results[i].querySelector('img').getAttribute('src') : 'no pic';
 
                     // 将信息添加到数组dataList中。

@@ -4,10 +4,19 @@
 
 /**************************
  *
+ * 1. title ---> 'h3'
+ * 2. info  ---> 'div'
+ * 3. link  ---> 'a'
+ * 4. pic   ---> 'img'
+ *
+ **************************/
+
+/**************************
+ *
  * 未解决的问题：
- * 1. 是应该按照设备给予不同的查找方式，还是统一查找的方式只不过添加判断？
- * 2. 平板的问题怎么解决
- * 3. 不同的移动设备，以及不同的结果中不一样排版怎么解决？
+ * 1. 是应该按照设备给予不同的查找方式，还是统一查找的方式只不过添加判断？ ---> 找到各种设备的统一特征，力求一种解锁方式适用于多种设备
+ * 2. 平板的问题怎么解决（首页没button）
+ * 3. 不同的移动设备，以及不同的结果中不一样排版怎么解决 ---> 同问题1
  *
  *************************/
 
@@ -150,15 +159,17 @@ page.open(address, function(status) {
         var index_result = page.evaluate(function(word) {
 
             // 获取输入条、按钮
-            var button = document.querySelector('#su') || document.querySelector('#index-bn'),
+            var button = document.querySelector('#su') || document.querySelector('#index-bn') || document.querySelector('#s_search_submit'),
                 input = document.querySelector('#index-kw') || document.querySelector('#kw');
                 //input = document.querySelector('#kw') || document.querySelector('#index-kw');
 
             // 用于检查元素类型
             var toString = Object.prototype.toString;
 
-            // 元素类型必须符合要求
-            if (toString.call(button) !== '[object HTMLButtonElement]'
+            console.log(toString.call(button));
+
+            // 元素类型必须符合要求，变量button是[object HTMLButtonElement]或者[object HTMLInputElement]
+            if (toString.call(button) !== '[object HTMLButtonElement]' && toString.call(button) !== '[object HTMLInputElement]'
                 || toString.call(input) !== '[object HTMLInputElement]') {
 
                 return false;
@@ -179,7 +190,7 @@ page.open(address, function(status) {
 
         // 等待
         setTimeout(function() {
-
+            console.log(page.url);
             dataList = page.evaluate(function() {
 
                 var results = document.querySelectorAll('.c-container'),
@@ -199,26 +210,9 @@ page.open(address, function(status) {
                 for (i = 0; i < results.length; i += 1) {
                     // 当前结果元素下
 
-                    // 先检查按类名 '.t'是否可以找到钙元素，如果找不到，试着按类名'.c-title'查找
-                    // 如果还找不到，则title = 'no title';
-                    title = results[i].querySelector('.t') ?
-                        results[i].querySelector('.t').textContent :
-                        results[i].querySelector('.c-blocka') ?
-                            results[i].querySelector('.c-blocka').textContent :
-                            'no title';
-
-                    // 先检查按类名 '.c-abstract'是否可以找到该元素，如果找不到，则试着按类名 '.c-span-last' 查找
-                    // 如果还找不到，则 info = 'no-info'
-                    info = results[i].querySelector('.c-abstract') ?
-                        results[i].querySelector('.c-abstract').textContent :
-                        results[i].querySelector('.c-span-last')?
-                            results[i].querySelector('.c-span-last').textContent :
-                            'no info';
-
-                    // 检查连接是否存在，不存在则link = 'no link'
-                    link = results[i].querySelector('.t a') ? results[i].querySelector('.t a').getAttribute('href') : results[i].querySelector('.c-blocka') ? results[i].querySelector('.c-blocka').getAttribute('href') : 'no link';
-
-                    // 检查图片是否存在，不存在则pic = 'no pic'
+                    title = results[i].querySelector('h3') ? results[i].querySelector('h3').textContent : 'no title';
+                    info = results[i].querySelector('div') ? results[i].querySelector('div').textContent : 'no info';
+                    link = results[i].querySelector('a') ? results[i].querySelector('a').getAttribute('href') : 'no link';
                     pic = results[i].querySelector('img') ? results[i].querySelector('img').getAttribute('src') : 'no pic';
 
                     // 将信息添加到数组dataList中。
