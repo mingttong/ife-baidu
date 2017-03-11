@@ -67,7 +67,7 @@ function trim(key, value) {
 // 检查参数
 if (system.args.length === 1) {
 
-    errExit('Usage: loadspeed.js <some URL>');
+    errExit('Usage: loadspeed.js <some Keyword>');
 
 } else {
 

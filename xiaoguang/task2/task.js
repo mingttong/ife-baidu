@@ -3,6 +3,7 @@
  */
 
 var page = require('webpage').create(),
+    fs = require('fs'),
     system = require('system'),
     address = 'http://baidu.com',
 
@@ -66,10 +67,13 @@ setTimeout(function() {
 }, limitTime);
 
 // 中文编码，视控制台编码而定
-//phantom.outputEncoding = 'gbk';
+phantom.outputEncoding = 'gbk';
 
 // 开始计时
 time = Date.now();
+
+var content = fs.read('config.json');
+console.log(content);
 
 page.open(address, function(status) {
 
@@ -166,7 +170,7 @@ page.open(address, function(status) {
             // 来张照片
             page.render('result/' + word + '.png');
             // 顺便美化一下JSON的输出
-            console.log(JSON.stringify(result_json, trim, 4));
+            //console.log(JSON.stringify(result_json, trim, 4));
             phantom.exit();
 
         }, loadTime); // setTimeout
