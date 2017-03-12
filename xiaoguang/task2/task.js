@@ -15,7 +15,7 @@
  *
  * 未解决的问题：
  * 1. 是应该按照设备给予不同的查找方式，还是统一查找的方式只不过添加判断？ ---> 找到各种设备的统一特征，力求一种解锁方式适用于多种设备
- * 2. 平板的问题怎么解决（首页没button）
+ * 2. *****平板的问题怎么解决（首页没button）*****
  * 3. 不同的移动设备，以及不同的结果中不一样排版怎么解决 ---> 同问题1
  *
  *************************/
@@ -73,7 +73,24 @@ function trim(key, value) {
     return value;
 }
 
-// 检查参数
+page.onLoadStarted = function() {
+    loadInProgress = true;
+    console.log('load started');
+};
+
+page.onLoadFinished = function() {
+    loadInProgress = false;
+    console.log('load finished');
+};
+
+page.onUrlChanged = function(targetUrl) {
+    console.log('onUrlChanged');
+    console.log('New URL: ' + targetUrl);
+};
+
+/*****************************
+ * 流程开始
+ *****************************/
 if (system.args.length <= 2) {
 
     errExit('Usage: loadspeed.js <Keyword> <Device>');
@@ -166,8 +183,6 @@ page.open(address, function(status) {
             // 用于检查元素类型
             var toString = Object.prototype.toString;
 
-            console.log(toString.call(button));
-
             // 元素类型必须符合要求，变量button是[object HTMLButtonElement]或者[object HTMLInputElement]
             if (toString.call(button) !== '[object HTMLButtonElement]' && toString.call(button) !== '[object HTMLInputElement]'
                 || toString.call(input) !== '[object HTMLInputElement]') {
@@ -190,7 +205,7 @@ page.open(address, function(status) {
 
         // 等待
         setTimeout(function() {
-            console.log(page.url);
+
             dataList = page.evaluate(function() {
 
                 var results = document.querySelectorAll('.c-container'),
