@@ -17,10 +17,10 @@ http.createServer(function(request, response) {
     var queryObj = url.parse(request.url, true).query;
 
     // 检查参数是否填写正确
-    if(queryObj['key'] && queryObj['device']) {
+    if(queryObj['key']) {
 
         let key = queryObj['key'],
-            device = queryObj['device'];
+            device = queryObj['device'] || '';
 
         exec('phantomjs task.js' + ' ' + key + ' ' + device, function(error, stdout, stderr) {
 
@@ -28,7 +28,54 @@ http.createServer(function(request, response) {
                 console.error('exec error: ${error}');
             } else {
 
-                console.log(stdout);
+                // mongoose连接
+                var mongoose = require('mongoose');
+                mongoose.Promise = global.Promise;
+                var db = mongoose.createConnection('mongodb://127.0.0.1:27017/ife-baidu');
+
+                // 连接错误
+                db.on('error', function(error) {
+                    console.log(error);
+                });
+                db.once('open', function(callback) {
+                    console.log('mongoose connected');
+                });
+
+                /*************
+                 * 是否可以just code: Number ?
+                 */
+
+                // Schema结构
+                var mongooseSchema = new mongoose.Schema({
+                    code: {type: Number},
+                    msg: {type: String},
+                    device: {type: String},
+                    word: {type: String},
+                    time: {type: Number},
+                    dataList: [{}]
+                });
+
+                // 编辑定义好的Schema
+                var Result = db.model('mongoose', mongooseSchema);
+
+               try {
+                   // 新建一个文档
+                   var result = new Result(JSON.parse(stdout));
+
+                   // 将文档保存到数据库
+                   result.save(function(err, result) {
+                       if (err) {
+                           console.log(err);
+                       } else {
+                           console.log(result);
+                       }
+                   })
+
+               } catch (err) {
+
+                   request.write(200, {'Content-Type': 'application/json'});
+                   return request.end(JSON.stringify({code: 0, err: '请确认参数是否正确'}));
+               }
 
             }
 
