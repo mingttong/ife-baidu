@@ -26,16 +26,16 @@ var page = require('webpage').create(),
 
     i,
 
-    // 限制时间，在限制时间内没加载出来则退出
+// 限制时间，在限制时间内没加载出来则退出
     limitTime = 20000,
 
-    // 加载时间
+// 加载时间
     loadTime = 2000,
 
-    // 设备信息
+// 设备信息
     device_info,
 
-    // 返回结果信息
+// 返回结果信息
     result_json = {code: 0},
     device,
     word,
@@ -72,27 +72,32 @@ function trim(key, value) {
     return value;
 }
 
-page.onLoadStarted = function() {
-    loadInProgress = true;
-    console.log('load started');
-};
-
-page.onLoadFinished = function() {
-    loadInProgress = false;
-    console.log('load finished');
-};
-
-page.onUrlChanged = function(targetUrl) {
-    console.log('onUrlChanged');
-    console.log('New URL: ' + targetUrl);
-};
+//page.onLoadStarted = function() {
+//    loadInProgress = true;
+//    console.log('load started');
+//};
+//
+//page.onLoadFinished = function() {
+//    loadInProgress = false;
+//    console.log('load finished');
+//};
+//
+//page.onUrlChanged = function(targetUrl) {
+//    console.log('onUrlChanged');
+//    console.log('New URL: ' + targetUrl);
+//};
 
 /*****************************
  * 流程开始
  *****************************/
-if (system.args.length <= 2) {
+if (system.args.length < 2) {
 
     errExit('Usage: task.js <Keyword> <Device>');
+
+} else if (system.args.length === 2) {
+
+    word = system.args[1];
+    device = 'pc';
 
 } else {
 
@@ -109,7 +114,7 @@ setTimeout(function() {
 }, limitTime);
 
 // 中文编码，视控制台编码而定
-phantom.outputEncoding = 'gbk';
+//phantom.outputEncoding = 'gbk';
 
 // 开始计时
 time = Date.now();
@@ -118,45 +123,49 @@ time = Date.now();
  * 从配置文件中获取设备信息
  **************************/
 
-    // 检查配置文件是否存在
-if (fs.exists('config.json')) {
+// 如果不是pc，则去配置设备信息
+if (device !== 'pc') {
 
-    var config_json = JSON.parse(fs.read('config.json')),
+    // 检查配置文件是否存在
+    if (fs.exists('config.json')) {
+
+        var config_json = JSON.parse(fs.read('config.json')),
 
         // 获取配置文件中的设备列表
-        device_list = config_json.device;
+            device_list = config_json.device;
 
-    // 获取设备信息
-    device_info = (function() {
+        // 获取设备信息
+        device_info = (function() {
 
-        for (i = 0; i < device_list.length; i += 1) {
-            if (device_list[i].name === device) {
-                return device_list[i];
+            for (i = 0; i < device_list.length; i += 1) {
+                if (device_list[i].name === device) {
+                    return device_list[i];
+                }
             }
+
+            return false;
+
+        }());
+
+        // 检查设备是否存在，并且信息正确
+        if (device_info && device_info.ua && device_info.width && device_info.height) {
+
+            // 设备信息正确，设置phantomJs信息
+            page.settings.userAgent = device_info.ua;
+            page.viewportSize = {
+                width: device_info.width,
+                height: device_info.height
+            };
+
+        } else {
+
+            errExit('FAIL device info error in config.json');
         }
-
-        return false;
-
-    }());
-
-    // 检查设备是否存在，并且信息正确
-    if (device_info && device_info.ua && device_info.width && device_info.height) {
-
-        // 设备信息正确，设置phantomJs信息
-        page.settings.userAgent = device_info.ua;
-        page.viewportSize = {
-            width: device_info.width,
-            height: device_info.height
-        };
 
     } else {
 
-        errExit('FAIL device info error in config.json');
+        errExit('FAIL config not found');
     }
-
-} else {
-
-    errExit('FAIL config not found');
 }
 
 /*****************************
@@ -177,7 +186,7 @@ page.open(address, function(status) {
             // 获取输入条、按钮
             var button = document.querySelector('#su') || document.querySelector('#index-bn') || document.querySelector('#s_search_submit'),
                 input = document.querySelector('#index-kw') || document.querySelector('#kw');
-                //input = document.querySelector('#kw') || document.querySelector('#index-kw');
+            //input = document.querySelector('#kw') || document.querySelector('#index-kw');
 
             // 用于检查元素类型
             var toString = Object.prototype.toString;
@@ -276,6 +285,6 @@ page.open(address, function(status) {
     }
 }); // page.open
 
-page.onConsoleMessage = function(mes) {
-    console.log(mes);
-};
+//page.onConsoleMessage = function(mes) {
+//    console.log(mes);
+//};
