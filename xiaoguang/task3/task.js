@@ -72,21 +72,6 @@ function trim(key, value) {
     return value;
 }
 
-//page.onLoadStarted = function() {
-//    loadInProgress = true;
-//    console.log('load started');
-//};
-//
-//page.onLoadFinished = function() {
-//    loadInProgress = false;
-//    console.log('load finished');
-//};
-//
-//page.onUrlChanged = function(targetUrl) {
-//    console.log('onUrlChanged');
-//    console.log('New URL: ' + targetUrl);
-//};
-
 /*****************************
  * 流程开始
  *****************************/
@@ -106,15 +91,15 @@ if (system.args.length < 2) {
 
 }
 
+// 设置url
+address = address + '/s?wd=' + encodeURIComponent(word);
+
 // 设置限制时间
 setTimeout(function() {
 
     errExit('FAIL to load the address. Timeout!');
 
 }, limitTime);
-
-// 中文编码，视控制台编码而定
-//phantom.outputEncoding = 'gbk';
 
 // 开始计时
 time = Date.now();
@@ -180,111 +165,71 @@ page.open(address, function(status) {
 
     } else {
 
-        // 输入关键字并跳转，返回错误信息
-        var index_result = page.evaluate(function(word) {
+        dataList = page.evaluate(function() {
 
-            // 获取输入条、按钮
-            var button = document.querySelector('#su') || document.querySelector('#index-bn') || document.querySelector('#s_search_submit'),
-                input = document.querySelector('#index-kw') || document.querySelector('#kw');
-                //input = document.querySelector('#kw') || document.querySelector('#index-kw');
+            var results = document.querySelectorAll('.c-container'),
+                dataList = [],
+                i,
+                title,
+                info,
+                link,
+                pic;
 
-            // 用于检查元素类型
-            var toString = Object.prototype.toString;
+            if (!results.length) {
+                // 没找到节点
 
-            // 元素类型必须符合要求，变量button是[object HTMLButtonElement]或者[object HTMLInputElement]
-            if (toString.call(button) !== '[object HTMLButtonElement]' && toString.call(button) !== '[object HTMLInputElement]'
-                || toString.call(input) !== '[object HTMLInputElement]') {
-
-                return false;
+                return null;
             }
 
-            input.value = word;
-            button.click();
+            for (i = 0; i < results.length; i += 1) {
+                // 当前结果元素下
 
-            return true;
+                title = results[i].querySelector('h3') ? results[i].querySelector('h3').textContent : 'no title';
+                info = results[i].querySelector('div') ? results[i].querySelector('div').textContent : 'no info';
+                link = results[i].querySelector('a') ? results[i].querySelector('a').getAttribute('href') : 'no link';
+                pic = results[i].querySelector('img') ? results[i].querySelector('img').getAttribute('src') : 'no pic';
 
-        }, word);
+                // 将信息添加到数组dataList中。
+                dataList.push(
+                    {
+                        title: title,
+                        info: info,
+                        link: link,
+                        pic: pic
+                    }
+                );
 
-        if (!index_result) {
+            }
 
-            errExit('FAIL element error in index');
+            return dataList;
 
+        });
+
+        // 计时停止
+        time = Date.now() - time;
+
+        // 检查抓取的结果
+        if (dataList) {
+
+            result_json = {
+                code: 1,
+                msg: '抓取成功',
+                device: device,
+                word: word,
+                time: time,
+                dataList: dataList
+            };
+
+        } else {
+
+            errExit('FAIL to catch data');
         }
 
-        // 等待
-        setTimeout(function() {
-
-            dataList = page.evaluate(function() {
-
-                var results = document.querySelectorAll('.c-container'),
-                    dataList = [],
-                    i,
-                    title,
-                    info,
-                    link,
-                    pic;
-
-                if (!results.length) {
-                    // 没找到节点
-
-                    return null;
-                }
-
-                for (i = 0; i < results.length; i += 1) {
-                    // 当前结果元素下
-
-                    title = results[i].querySelector('h3') ? results[i].querySelector('h3').textContent : 'no title';
-                    info = results[i].querySelector('div') ? results[i].querySelector('div').textContent : 'no info';
-                    link = results[i].querySelector('a') ? results[i].querySelector('a').getAttribute('href') : 'no link';
-                    pic = results[i].querySelector('img') ? results[i].querySelector('img').getAttribute('src') : 'no pic';
-
-                    // 将信息添加到数组dataList中。
-                    dataList.push(
-                        {
-                            title: title,
-                            info: info,
-                            link: link,
-                            pic: pic
-                        }
-                    );
-
-                }
-
-                return dataList;
-
-            });
-
-            // 计时停止
-            time = Date.now() - time;
-
-            // 检查抓取的结果
-            if (dataList) {
-
-                result_json = {
-                    code: 1,
-                    msg: '抓取成功',
-                    device: device,
-                    word: word,
-                    time: time,
-                    dataList: dataList
-                };
-
-            } else {
-
-                errExit('FAIL to catch data');
-            }
-
-            // 来张照片
-            page.render('result/' + word + '.png');
-            // 顺便美化一下JSON的输出
-            console.log(JSON.stringify(result_json, trim, 4));
-            phantom.exit();
-
-        }, loadTime); // setTimeout
+        // 来张照片
+        page.render('result/' + word + '.png');
+        // 顺便美化一下JSON的输出
+        console.log(JSON.stringify(result_json, trim, 4));
+        phantom.exit();
 
     }
 }); // page.open
-
-//page.onConsoleMessage = function(mes) {
-//    console.log(mes);
-//};

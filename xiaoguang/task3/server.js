@@ -66,8 +66,11 @@ http.createServer(function(request, response) {
                 // 编辑定义好的Schema
                 var Result = db.model('mongoose', mongooseSchema);
 
+                console.log(stdout);
+
                 try {
                     // 新建一个文档
+                    // 注意，如果stdout不是JSON则会报错
                     var result = new Result(JSON.parse(stdout));
 
                     // 将文档保存到数据库
@@ -86,8 +89,8 @@ http.createServer(function(request, response) {
 
                 } catch (err) {
 
-                    request.write(200, {'Content-Type': 'application/json'});
-                    return request.end(JSON.stringify({code: 0, err: '请确认参数是否正确'}));
+                    response.writeHead(200, {'Content-Type': 'application/json'});
+                    return response.end(JSON.stringify({code: 0, err: '请确认参数是否正确'}));
                 }
 
             }
