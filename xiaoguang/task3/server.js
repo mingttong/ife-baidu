@@ -2,6 +2,19 @@
  * Created by lenovo on 2017/3/13.
  */
 
+/*****************************************
+ *
+ * 我对mongoose的理解：
+ *
+ * *****Mongo是以对象为单位存储数据的*****
+ *
+ * mongoose要存一条数据到Mongo数据库中：
+ * 1. 首先要创建一个类似于模板，这个模板描述了你要存的数据是长什么样的。
+ * 2. 然后我们利用这个模板通过mongoose.model()创建一个类。
+ * 3. 我们通过新建的这个类实例化我们的数据对象。
+ *
+ *****************************************/
+
 const http = require('http');
 // URL模块
 const url = require('url');
@@ -19,7 +32,7 @@ http.createServer(function(request, response) {
     // 检查参数是否填写正确
     if(queryObj['key']) {
 
-        let key = queryObj['key'],
+        var key = queryObj['key'],
             device = queryObj['device'] || '';
 
         exec('phantomjs task.js' + ' ' + key + ' ' + device, function(error, stdout, stderr) {
@@ -34,64 +47,57 @@ http.createServer(function(request, response) {
                 var db = mongoose.createConnection('mongodb://127.0.0.1:27017/ife-baidu');
 
                 // 连接错误
-                db.on('error', function(error) {
-                    console.log(error);
-                });
+                db.on('error', console.error.bind(console, 'connection error:'));
+                // 连接成功，将数据存入数据库
                 db.once('open', function(callback) {
-                    console.log('mongoose connected');
-                });
 
-                // Schema结构
-                var mongooseSchema = new mongoose.Schema({
-                    //code: {type: Number},
-                    //msg: {type: String},
-                    //device: {type: String},
-                    //word: {type: String},
-                    //time: {type: Number},
-                    //dataList: [{}]
+                    // 定义一个Schema
+                    var baiduSchema = mongoose.Schema({
 
-                    code: Number,
-                    msg: String,
-                    device: String,
-                    word: String,
-                    time: Number,
-                    dataList: [{
-                        title: String,
-                        info: String,
-                        link: String,
-                        pic: String
-                    }]
-                });
-
-                // 编辑定义好的Schema
-                var Result = db.model('mongoose', mongooseSchema);
-
-                console.log(stdout);
-
-                try {
-                    // 新建一个文档
-                    // 注意，如果stdout不是JSON则会报错
-                    var result = new Result(JSON.parse(stdout));
-
-                    // 将文档保存到数据库
-                    result.save(function(err, result) {
-                        if (err) {
-                            console.log(err);
-                        } else {
-                            console.log(result);
-                        }
+                        code: Number,
+                        msg: String,
+                        device: String,
+                        word: String,
+                        time: Number,
+                        dataList: [{
+                            title: String,
+                            info: String,
+                            link: String,
+                            pic: String
+                        }]
                     });
 
-                    response.writeHead(200, {"Content-Type": "application/json"});
-                    // 输出到屏幕上
-                    response.write(stdout);
-                    response.end();
+                    // 编辑定义好的Schema到一个Model中，这里我们取名叫BaiduResult，这时候BaiduResult这个Model就是一个类了
+                    var BaiduResult = mongoose.model('BaiduResult', baiduSchema);
 
-                } catch (err) {
+                    try {
 
-                    response.writeHead(200, {'Content-Type': 'application/json'});
-                    return response.end(JSON.stringify({code: 0, err: '请确认参数是否正确'}));
-                }
+                        // 上面创建好类了以后，这里我们通过这个类实例化一个对象
+                        // 注意，如果stdout不是JSON则会报错
+                        var result = new BaiduResult(JSON.parse(stdout));
+
+                        // 将文档保存到数据库
+                        // 调用
+                        result.save(function(err, result) {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                console.log(result);
+                            }
+                        });
+
+                        response.writeHead(200, {"Content-Type": "application/json"});
+                        // 输出到屏幕上
+                        response.write(stdout);
+                        response.end();
+
+                    } catch (err) {
+
+                        response.writeHead(200, {'Content-Type': 'application/json'});
+                        response.end(JSON.stringify({code: 0, err: '查询结果输出有误'}));
+                    }
+
+                });
 
             }
 
