@@ -41,41 +41,54 @@ http.createServer(function(request, response) {
                     console.log('mongoose connected');
                 });
 
-                /*************
-                 * 是否可以just code: Number ?
-                 */
-
                 // Schema结构
                 var mongooseSchema = new mongoose.Schema({
-                    code: {type: Number},
-                    msg: {type: String},
-                    device: {type: String},
-                    word: {type: String},
-                    time: {type: Number},
-                    dataList: [{}]
+                    //code: {type: Number},
+                    //msg: {type: String},
+                    //device: {type: String},
+                    //word: {type: String},
+                    //time: {type: Number},
+                    //dataList: [{}]
+
+                    code: Number,
+                    msg: String,
+                    device: String,
+                    word: String,
+                    time: Number,
+                    dataList: [{
+                        title: String,
+                        info: String,
+                        link: String,
+                        pic: String
+                    }]
                 });
 
                 // 编辑定义好的Schema
                 var Result = db.model('mongoose', mongooseSchema);
 
-               try {
-                   // 新建一个文档
-                   var result = new Result(JSON.parse(stdout));
+                try {
+                    // 新建一个文档
+                    var result = new Result(JSON.parse(stdout));
 
-                   // 将文档保存到数据库
-                   result.save(function(err, result) {
-                       if (err) {
-                           console.log(err);
-                       } else {
-                           console.log(result);
-                       }
-                   })
+                    // 将文档保存到数据库
+                    result.save(function(err, result) {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            console.log(result);
+                        }
+                    });
 
-               } catch (err) {
+                    response.writeHead(200, {"Content-Type": "application/json"});
+                    // 输出到屏幕上
+                    response.write(stdout);
+                    response.end();
 
-                   request.write(200, {'Content-Type': 'application/json'});
-                   return request.end(JSON.stringify({code: 0, err: '请确认参数是否正确'}));
-               }
+                } catch (err) {
+
+                    request.write(200, {'Content-Type': 'application/json'});
+                    return request.end(JSON.stringify({code: 0, err: '请确认参数是否正确'}));
+                }
 
             }
 
@@ -84,11 +97,14 @@ http.createServer(function(request, response) {
 
     } else {
         // 参数填写错误...
+        console.log('FAIL no key word');
+        response.writeHead(200, {"Content-Type": "text/plain"});
+        response.write('请输入关键字');
+        response.end();
     }
 
-    response.writeHead(200, {"Content-Type": "text/plain"});
 
-    response.end();
+    //response.end();
 }).listen(8000);
 
 console.log("server started");
