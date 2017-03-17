@@ -7,6 +7,7 @@
  * 我对mongoose的理解：
  *
  * *****Mongo是以对象为单位存储数据的*****
+ * *****Mongo中的“表”实际上是一个类，当我们
  *
  * mongoose要存一条数据到Mongo数据库中：
  * 1. 首先要创建一个类似于模板，这个模板描述了你要存的数据是长什么样的。
@@ -67,6 +68,12 @@ http.createServer(function(request, response) {
                         }]
                     });
 
+                    //baiduSchema.methods.getWord = function() {
+                    //    return this.word
+                    //        ? "关键字是" + this.word
+                    //        : "没有关键字";
+                    //};
+
                     // 编辑定义好的Schema到一个Model中，这里我们取名叫BaiduResult，这时候BaiduResult这个Model就是一个类了
                     var BaiduResult = mongoose.model('BaiduResult', baiduSchema);
 
@@ -76,8 +83,10 @@ http.createServer(function(request, response) {
                         // 注意，如果stdout不是JSON则会报错
                         var result = new BaiduResult(JSON.parse(stdout));
 
+                        //console.log(result.getWord());
+
                         // 将文档保存到数据库
-                        // 调用
+                        // 调用数据对象的save方法
                         result.save(function(err, result) {
                             if (err) {
                                 console.log(err);
@@ -92,6 +101,8 @@ http.createServer(function(request, response) {
                         response.end();
 
                     } catch (err) {
+
+                        console.log(err);
 
                         response.writeHead(200, {'Content-Type': 'application/json'});
                         response.end(JSON.stringify({code: 0, err: '查询结果输出有误'}));
