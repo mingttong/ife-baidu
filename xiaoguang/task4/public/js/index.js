@@ -25,21 +25,23 @@ su.click(function () {
 
         tip.textContent = '';
 
+        var url = `server.js?key=${kw}&device=${device}`;
+
+        //// 获取数据
+        //$.getJSON(`server.js?key=${kw}&device=${device}`, function(result) {
+        //
+        //    console.log(result);
+        //
+        //});
+
         var httpRequest = new XMLHttpRequest();
 
-        if (httpRequest) {
+        httpRequest.onreadystatechange = function() {
+            console.log(httpRequest.responseText);
+        };
 
-            var url = `localhost:8000/?key=${kw}&device=${device}`;
-
-            // 回调函数
-            httpRequest.onreadystatechange = function() {
-                result.textContent = httpRequest.text;
-            };
-
-            httpRequest.open("GET", url, true);
-            httpRequest.send();
-
-        }
+        httpRequest.open('GET', url, true);
+        httpRequest.send();
 
     }
 
