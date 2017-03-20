@@ -20,6 +20,93 @@ const http = require('http');
 // URL模块
 const url = require('url');
 const exec = require('child_process').exec;
+// 通过拓展名获取'Content-Type'
+
+/***********************************
+ *
+ * server
+ *
+ ***********************************/
+
+const server = http.createServer(function (request, response) {
+    console.log('request received');
+
+    /*
+     * 接收到的请求
+     *
+     * 1. 这仅仅是简单的在服务端做一个简单的处理，应当把
+     * 这个搜索的模块放到一个单独的地方。
+     *
+     * 2. 服务器只处理请求的业务，具体请求后怎么处理并响
+     * 应，应当路由器发给各个模块来处理。
+     *
+     * 3. 响应的Content-Type可以参照“3分钟搭建node服务器”
+     */
+
+    // 解析url，并获取搜索的关键字对象
+    var queryObj = url.parse(request.url, true).query;
+
+    // 检查参数是否填写正确
+    if (queryObj['key']) {
+
+        var key = queryObj['key'],
+            device = queryObj['device'] || '';
+
+        exec('phantomjs task.js' + ' ' + key + ' ' + device, function (error, stdout, stderr) {
+
+            if (error) {
+
+                console.error('exec error: ${error}');
+
+            } else {
+
+                try {
+
+                    // 上面创建好类了以后，这里我们通过这个类实例化一个对象
+                    // 注意，如果stdout不是JSON则会报错
+                    var result = new BaiduResult(JSON.parse(stdout));
+
+                    // 将文档保存到数据库
+                    // 调用数据对象的save方法
+                    result.save(function (err, result) {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            console.log(result);
+                        }
+                    });
+
+                    response.writeHead(200, {"Content-Type": "application/json"});
+                    // 输出到屏幕上
+                    response.write(stdout);
+                    response.end();
+
+                } catch (err) {
+
+                    console.log(err);
+
+                    response.writeHead(200, {'Content-Type': 'application/json'});
+                    response.end(JSON.stringify({code: 0, err: '查询结果输出有误'}));
+                }
+
+            }
+
+        });
+
+
+    } else {
+        // 参数填写错误...
+        console.log('FAIL no key word');
+        response.writeHead(200, {"Content-Type": "application/json"});
+        response.end(JSON.stringify({code: 0, err: '请输入关键字'}));
+        response.end();
+    }
+
+});
+
+/*********************************
+ * server end
+ *********************************/
 
 /********************************
  *
@@ -55,94 +142,15 @@ var BaiduResult = mongoose.model('BaiduResult', baiduSchema);
 db.on('error', console.error.bind(console, 'connection error:'));
 // 连接成功，将数据存入数据库
 db.once('open', function (callback) {
+    console.log('mongodb connected!');
 
-    /***********************************
-     *
-     * server
-     *
-     ***********************************/
-
-    http.createServer(function (request, response) {
-        console.log('request received');
-
-        /*
-         * 接收到的请求
-         *
-         * 1. 这仅仅是简单的在服务端做一个简单的处理，应当把
-         * 这个搜索的模块放到一个单独的地方。
-         *
-         * 2. 服务器只处理请求的业务，具体请求后怎么处理并响
-         * 应，应当路由器发给各个模块来处理。
-         *
-         * 3. 响应的Content-Type可以参照“3分钟搭建node服务器”
-         */
-
-        // 解析url，并获取搜索的关键字对象
-        var queryObj = url.parse(request.url, true).query;
-
-        // 检查参数是否填写正确
-        if (queryObj['key']) {
-
-            var key = queryObj['key'],
-                device = queryObj['device'] || '';
-
-            exec('phantomjs task.js' + ' ' + key + ' ' + device, function (error, stdout, stderr) {
-
-                if (error) {
-
-                    console.error('exec error: ${error}');
-
-                } else {
-
-                    try {
-
-                        // 上面创建好类了以后，这里我们通过这个类实例化一个对象
-                        // 注意，如果stdout不是JSON则会报错
-                        var result = new BaiduResult(JSON.parse(stdout));
-
-                        // 将文档保存到数据库
-                        // 调用数据对象的save方法
-                        result.save(function (err, result) {
-                            if (err) {
-                                console.log(err);
-                            } else {
-                                console.log(result);
-                            }
-                        });
-
-                        response.writeHead(200, {"Content-Type": "application/json"});
-                        // 输出到屏幕上
-                        response.write(stdout);
-                        response.end();
-
-                    } catch (err) {
-
-                        console.log(err);
-
-                        response.writeHead(200, {'Content-Type': 'application/json'});
-                        response.end(JSON.stringify({code: 0, err: '查询结果输出有误'}));
-                    }
-
-                }
-
-            });
-
-
-        } else {
-            // 参数填写错误...
-            console.log('FAIL no key word');
-            response.writeHead(200, {"Content-Type": "application/json"});
-            response.end(JSON.stringify({code: 0, err: '请输入关键字'}));
-            response.end();
-        }
-
-    }).listen(8000, function() {
-        console.log("server started");
+    server.listen(8000, function() {
+        console.log("server started!");
     });
 
-    /*********************************
-     * server end
-     *********************************/
-
 });
+
+/**********************************
+ * mongoose end
+ **********************************/
 
