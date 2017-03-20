@@ -12,12 +12,7 @@
  *
  **************************/
 
-/**************************
- *
- * 未解决的问题：
- * 1. *****平板的问题怎么解决（首页没button）*****
- *
- *************************/
+const phantom = require('phantom');
 
 var page = require('webpage').create(),
     fs = require('fs'),
