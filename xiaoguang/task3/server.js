@@ -20,95 +20,74 @@ const http = require('http');
 // URL模块
 const url = require('url');
 const exec = require('child_process').exec;
+// 通过拓展名获取'Content-Type'
 
-http.createServer(function(request, response) {
+/***********************************
+ *
+ * server
+ *
+ ***********************************/
+
+const server = http.createServer(function (request, response) {
     console.log('request received');
 
-    // 判断请求的方法，比如GET, POST
-    //console.log(request.method);
+    /*
+     * 接收到的请求
+     *
+     * 1. 这仅仅是简单的在服务端做一个简单的处理，应当把
+     * 这个搜索的模块放到一个单独的地方。
+     *
+     * 2. 服务器只处理请求的业务，具体请求后怎么处理并响
+     * 应，应当路由器发给各个模块来处理。
+     *
+     * 3. 响应的Content-Type可以参照“3分钟搭建node服务器”
+     */
 
     // 解析url，并获取搜索的关键字对象
     var queryObj = url.parse(request.url, true).query;
 
     // 检查参数是否填写正确
-    if(queryObj['key']) {
+    if (queryObj['key']) {
 
         var key = queryObj['key'],
             device = queryObj['device'] || '';
 
-        exec('phantomjs task.js' + ' ' + key + ' ' + device, function(error, stdout, stderr) {
+        exec('phantomjs task.js' + ' ' + key + ' ' + device, function (error, stdout, stderr) {
 
             if (error) {
+
                 console.error('exec error: ${error}');
+
             } else {
 
-                // mongoose连接
-                var mongoose = require('mongoose');
-                mongoose.Promise = global.Promise;
-                var db = mongoose.createConnection('mongodb://127.0.0.1:27017/ife-baidu');
+                try {
 
-                // 连接错误
-                db.on('error', console.error.bind(console, 'connection error:'));
-                // 连接成功，将数据存入数据库
-                db.once('open', function(callback) {
+                    // 上面创建好类了以后，这里我们通过这个类实例化一个对象
+                    // 注意，如果stdout不是JSON则会报错
+                    var result = new BaiduResult(JSON.parse(stdout));
 
-                    // 定义一个Schema
-                    var baiduSchema = mongoose.Schema({
-
-                        code: Number,
-                        msg: String,
-                        device: String,
-                        word: String,
-                        time: Number,
-                        dataList: [{
-                            title: String,
-                            info: String,
-                            link: String,
-                            pic: String
-                        }]
+                    // 将文档保存到数据库
+                    // 调用数据对象的save方法
+                    result.save(function (err, result) {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            console.log(result);
+                        }
                     });
 
-                    //baiduSchema.methods.getWord = function() {
-                    //    return this.word
-                    //        ? "关键字是" + this.word
-                    //        : "没有关键字";
-                    //};
+                    response.writeHead(200, {"Content-Type": "application/json"});
+                    // 输出到屏幕上
+                    response.write(stdout);
+                    response.end();
 
-                    // 编辑定义好的Schema到一个Model中，这里我们取名叫BaiduResult，这时候BaiduResult这个Model就是一个类了
-                    var BaiduResult = mongoose.model('BaiduResult', baiduSchema);
+                } catch (err) {
 
-                    try {
+                    console.log(err);
 
-                        // 上面创建好类了以后，这里我们通过这个类实例化一个对象
-                        // 注意，如果stdout不是JSON则会报错
-                        var result = new BaiduResult(JSON.parse(stdout));
-
-                        //console.log(result.getWord());
-
-                        // 将文档保存到数据库
-                        // 调用数据对象的save方法
-                        result.save(function(err, result) {
-                            if (err) {
-                                console.log(err);
-                            } else {
-                                console.log(result);
-                            }
-                        });
-
-                        response.writeHead(200, {"Content-Type": "application/json"});
-                        // 输出到屏幕上
-                        response.write(stdout);
-                        response.end();
-
-                    } catch (err) {
-
-                        console.log(err);
-
-                        response.writeHead(200, {'Content-Type': 'application/json'});
-                        response.end(JSON.stringify({code: 0, err: '查询结果输出有误'}));
-                    }
-
-                });
+                    response.writeHead(200, {'Content-Type': 'application/json'});
+                    response.end(JSON.stringify({code: 0, err: '查询结果输出有误'}));
+                }
 
             }
 
@@ -118,13 +97,60 @@ http.createServer(function(request, response) {
     } else {
         // 参数填写错误...
         console.log('FAIL no key word');
-        response.writeHead(200, {"Content-Type": "text/plain"});
-        response.write('请输入关键字');
+        response.writeHead(200, {"Content-Type": "application/json"});
+        response.end(JSON.stringify({code: 0, err: '请输入关键字'}));
         response.end();
     }
 
+});
 
-    //response.end();
-}).listen(8000);
+/*********************************
+ * server end
+ *********************************/
 
-console.log("server started");
+/********************************
+ *
+ * mongoose
+ *
+ ********************************/
+
+// mongoose连接
+var mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
+var db = mongoose.createConnection('mongodb://127.0.0.1:27017/ife-baidu');
+
+// 定义一个Schema
+var baiduSchema = mongoose.Schema({
+
+    code: Number,
+    msg: String,
+    device: String,
+    word: String,
+    time: Number,
+    dataList: [{
+        title: String,
+        info: String,
+        link: String,
+        pic: String
+    }]
+});
+
+// 编辑定义好的Schema到一个Model中，这里我们取名叫BaiduResult，这时候BaiduResult这个Model就是一个类了
+var BaiduResult = mongoose.model('BaiduResult', baiduSchema);
+
+// 连接错误
+db.on('error', console.error.bind(console, 'connection error:'));
+// 连接成功，将数据存入数据库
+db.once('open', function (callback) {
+    console.log('mongodb connected!');
+
+    server.listen(8000, function() {
+        console.log("server started!");
+    });
+
+});
+
+/**********************************
+ * mongoose end
+ **********************************/
+
