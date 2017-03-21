@@ -12,8 +12,6 @@
  *
  **************************/
 
-const phantom = require('phantom');
-
 var page = require('webpage').create(),
     fs = require('fs'),
     system = require('system'),
