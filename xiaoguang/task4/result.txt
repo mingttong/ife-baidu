@@ -1,0 +1,69 @@
+{
+    "code": 1,
+    "msg": "抓取成功",
+    "device": "pc",
+    "word": "刘强东",
+    "time": 905,
+    "dataList": [
+        {
+            "info": "刘强东，京东集团首席执行官，1974年2月14日出生于江苏省宿迁市，毕业于中国人民大学。1998年6月18日，在中关村创办京东公司，代理销售光磁产品，并担任总经理。2004年，初涉足电子商务领域，创办“京东多媒体网”（京东商城的前身），并出任CEO。目前，京东商城已成为中国最大的自营式电商企业，而京...人物经历商业理念人物轶事个人获奖个人生活更多>>baike.baidu.com/-",
+            "link": "http://www.baidu.com/link?url=gQvyUkAUcNhIDBuufvy2REbqKDR3Xgpg0RUP0OT0fnLODW1gOO1oGGyJ3ANnw21yzByoxtFAsb7v-KgOIxcShMTd9TKwsFfVW2xi3zpR_hbwwII5KU2GP_ByOO8Rp3_A",
+            "pic": "http://t12.baidu.com/it/u=1660473836,1559455268&fm=58",
+            "title": "刘强东_百度百科"
+        },
+        {
+            "info": "1小时前刘强东前妻龚小京为什么离婚扒一扒刘强东情史百姓娱乐据悉,龚小京家里已经连续三代从政,性格强势。京东商城的名字里的京字,即取自龚小京,东字则取自刘强东。后来刘强东创业,遭到家里人反对,认为堂堂中国...4小时前电商和电竞将成一家?刘强东组电竞战队女队要求感人!游侠网7小时前刘强东将组电竞战队不仅只有男队女队要求能歌善舞闽南网19小时前刘强东有一个亲妹妹,竟如此低调朴素(图)参考消息1天前京东成立服饰事业部,刘强东能做好女人生意吗?i黑马",
+            "link": "http://www.baidu.com/link?url=5NTHu0LWBbNNXsCgGVJWPOhrkkU7aspj_E-N5dNeIG4Xwga614I6jy1f7BzCB6mXAAYwkgswxn_PLGibjJgWmlncrxo1L08bHatZ6deZ18u1tfdpreDJLR9iXt5L2dw2",
+            "pic": "",
+            "title": "刘强东的最新相关信息"
+        },
+        {
+            "info": "2014年10月3日-关于刘强东老婆是谁一直受到关注,近日,刘强东章泽天被爆好事将近,有网友翻出刘强东前两任老婆,刘强东前妻和前女友分别是龚小京和庄佳,下面奇丽女性小编揭秘刘强东老婆...qinggan.71lady.com/hyc...-百度快照-72%好评",
+            "link": "http://www.baidu.com/link?url=Qp9c6ztVOeXtHDk9VhR9_oslnxvEbCc7qRuBz6A48ydd8wxi5nlttrCxtQ92o97fNlpACmtAxVcJzu4NWj9mbq",
+            "pic": "http://i8.baidu.com/it/u=3275600650,4146621875&fm=85&s=99304F954030458C2D1D23F003001026",
+            "title": "刘强东老婆是谁刘强东两任老婆龚小京庄佳照片曝光_婚姻城堡_奇丽..."
+        },
+        {
+            "info": "希望京东能活到2015年在刘强东看来,过去10年是电子商务跑马圈地赛,而2011年则全面进入淘汰赛。他预测:“2011年和2012年会是电子商务血战的两年,到2012...",
+            "link": "http://www.baidu.com/link?url=wWyQmTI7z2o6-bpyjEOiRAk5Y6hdCZDmqzBay0LaxcX2T3FznbckW9_bPFywbFZ33gl8g30KCpY9rjV-XnjntK",
+            "pic": "",
+            "title": "刘强东-人物频道-和讯网"
+        },
+        {
+            "info": "最佳答案:1974年出生的“京东叔”刘强东除了与1993年的奶茶妹妹不仅有着19岁的年龄差,刘更被知情人士爆料曾有婚史,儿子2006年出生,今年已8岁。记者求证时发现,...",
+            "link": "http://www.baidu.com/link?url=g7Mc8sN5bCjZxOIkvQ6RbnEirWvZJ5emoEgRnkq-cBJ5FDGa2qTLDPijGxD1cJ_Q94Hg-Sc1K7Jk73FKfqi0vcNoSdmXlfVpx-VMENaktDy",
+            "pic": "",
+            "title": "刘强东有几段婚姻_百度知道"
+        },
+        {
+            "info": "参加综艺",
+            "link": "http://www.baidu.com/link?url=iKK_5M-KYmKzO83WXBL6VQBmZ7dqiGSvDnFHQuaY_On_utSlHxLF2kTGOKBCMwLbGBvhyD60nEztA9jeyNyTUwBFApOMcbuTeWTqQrASRt7",
+            "pic": "http://t11.baidu.com/it/u=1170178588,308363276&fm=58",
+            "title": "刘强东的相关视频在线观看_百度视频"
+        },
+        {
+            "info": "",
+            "link": "http://www.baidu.com/link?url=FWVJ7LbU5oZoeoSasGZ-j4ibm6nLgAKvz96sM3Fk6R2fNYoi8PwZGOxPcHW5rQ8rT-4kL4XI9_Cnke8NQ30dnJjJouxPq4xCRi85O3zE22aQcBwZFxt5xO04zHXckGKQ3XvwwRt33Ql55NA5R77AKF8xrBKUGjSQZr0UpXTdhlrj-3rLu_eId2dWfWxCyk_RiPV0aPQCn8EVvyvFh80Zwdd5MEKMoYHrFPRKlVgIsQlus6k33ZGMVeqHZoobpWjz",
+            "pic": "http://img3.imgtn.bdimg.com/it/u=2627038754,2867791589&fm=111&gp=0.jpg",
+            "title": "刘强东_百度图片举报图片"
+        },
+        {
+            "info": "刘强东粉丝：335.1万微博：481最近，有关电商假货、冲击实体经济、纳税等话题被许多两会代表委员所广泛关注。我认为今天的虚实之争，不应该是优劣对错之争，...查看全文>>转发(2585)|评论(2830)3月7日17:26-新浪微博",
+            "link": "http://www.baidu.com/link?url=D93kr331c7fOn0glukLaVKVL3ars6aEdbGMPi9EAbHDIQIXHw9t9a97jNqb02RJ7W7XMXIz2SABEiliNgovmk_HBgUtPhwXqn6Ekcqs6TcinsiKJWvIfNos_4NJK54RE",
+            "pic": "http://t10.baidu.com/it/u=3282076737,3014575957&fm=58",
+            "title": "刘强东的新浪微博"
+        },
+        {
+            "info": "2015年6月5日-创业的时候刘强东有个在读研究生的女朋友,刘强东的创业行为也遭到女友的嫌弃,两人的交往也遭到其时任女友家人的坚决反对。柳传志联想公司创始人...it.sohu.com/20150605/n...-百度快照-37条评价",
+            "link": "http://www.baidu.com/link?url=n9lYK2oHNXf7cl2m9fyyytor_P2aedBRiJE_5rtLCx0sXu8ZnP7aVcN-QE08fEyJ6zgBJHJz6HlKE6w4lNOnOK",
+            "pic": "http://i8.baidu.com/it/u=3301648585,2273738653&fm=85&s=FE8AC20B54037CFEC330D98B01008081",
+            "title": "IT大佬奋斗史:马云蹬三轮送书刘强东遭女友嫌弃-搜狐科技"
+        },
+        {
+            "info": "2016年8月9日-由此可见,京东的控制权由刘强东牢牢把控,而其他高管仅仅是“打工者”的身份,既没有参与企业的初创,也没有拿到多少股票,也没有环境和机遇去播种和培育...news.hexun.com/2016-08...-百度快照-108条评价",
+            "link": "http://www.baidu.com/link?url=8LdRe6LcPFaEixTMiZ8wXKYDU-hVTif2NK38f_HQTZnVHdwXSh1H8v6SobP4bngGH9vPPMz8jo9vcp7eefH6xK",
+            "pic": "http://i7.baidu.com/it/u=3964499787,3656596862&fm=85&s=4B60934486B30D8662ACAC890300F093",
+            "title": "刘强东前女友回归背后京东成下一个“雅虎”了?-新闻频道-和讯网"
+        }
+    ]
+}

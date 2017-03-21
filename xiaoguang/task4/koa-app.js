@@ -5,13 +5,13 @@
 const PORT = 8000;
 
 const url = require('url');
-const exec = require('child_process').exec;
-const fs = require('fs');
 
 const Koa = require('koa');
 const Router = require('koa-router');
 const app = new Koa();
 const router = new Router();
+
+const crawl = require('./crawl');
 
 /********************************
  *
@@ -50,49 +50,13 @@ db.on('error', console.error.bind(console, 'connection error:'));
  * mongoose end
  **********************************/
 
-// crawl
-
-/**
- * 通过phantomjs去查询百度搜索结果
-  * @param key 关键词
- * @param device 用的设备
- * @returns {Promise} 返回的结果，JSON格式
- */
-const phantomTask = async (key, device) => {
-
-    return new Promise( (resolve, reject) => {
-
-            exec(`phantomjs task.js ${key} ${device}`, (err, stdout) => {
-
-                if (err) {
-                    reject(`调用服务错误 error: ${err}`);
-                } else {
-                    resolve(stdout);
-                }
-
-            });
-
-        }
-    );
-};
-
-const downloadPic = async (link) => {
-
-    return new Promise( (resolve, reject) => {
-
-        let picName = ``
-
-    });
-
-};
-
-const saveInDb = async () => {
-
-
-
-};
-
 // router
+
+router.get('', async function (ctx, next) {
+
+    await ctx.render('index');
+
+});
 
 router.get('/s', async function (ctx, next) {
 
@@ -105,7 +69,7 @@ router.get('/s', async function (ctx, next) {
         var key = queryObj['key'],
             device = queryObj['device'] || '';
 
-        var resultData = await phantomTask(key, device);
+        var resultData = await crawl(key, device);
 
         if (!resultData) {
 
@@ -116,29 +80,9 @@ router.get('/s', async function (ctx, next) {
             // 成功获取数据
 
             try {
-                resultData = JSON.parse(resultData);
-            } catch (err) {
-                console.log(err);
-                ctx.status = 200;
-                ctx.set('Content-Type', 'application/json');
-                ctx.body = JSON.stringify({code: 0, err: '查询结果输出有误'});
-            }
-
-            let datalist = resultData.dataList;
-
-            // 下载图片
-
-            for (let i = 0; i < datalist.length; i += 1) {
-
-                datalist[i].path = datalist[i].pic ? downloadPic(datalist[i].pic) : '';
-
-            }
-
-
-            try {
 
                 // 上面创建好类了以后，这里我们通过这个类实例化一个对象
-                var result = new BaiduResult(resultData);
+                var result = new BaiduResult(JSON.parse(resultData));
 
                 // 将文档保存到数据库
                 // 调用数据对象的save方法
@@ -181,12 +125,10 @@ router.get('/s', async function (ctx, next) {
 app.use(async function (ctx, next) {
 
     const start = new Date();
-    console.log('x-response-time 1');
     await next();
 
     const ms = new Date() - start;
     ctx.set('X-Response-Time', `${ms}ms`);
-    console.log('x-response-time 2');
 
 });
 
@@ -195,13 +137,11 @@ app.use(async function (ctx, next) {
 app.use(async function (ctx, next) {
 
     const start = new Date();
-    console.log('logger 1');
 
     await next();
 
     const ms = new Date() - start;
     console.log(`${ctx.method} ${ctx.url} - ${ms}ms`);
-    console.log('logger 2');
 
 });
 

@@ -144,6 +144,12 @@ if (device !== 'pc') {
 
         errExit('FAIL config not found');
     }
+
+} else {
+
+    // 设置电脑的ua
+
+    page.settings.userAgent = 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36';
 }
 
 /*****************************
@@ -181,6 +187,8 @@ page.open(address, function(status) {
                 info = results[i].querySelector('div') ? results[i].querySelector('div').textContent : 'no info';
                 link = results[i].querySelector('a') ? results[i].querySelector('a').getAttribute('href') : 'no link';
                 pic = results[i].querySelector('img') ? results[i].querySelector('img').getAttribute('src') : '';
+
+                console.log(pic);
 
                 // 将信息添加到数组dataList中。
                 dataList.push(
