@@ -180,7 +180,7 @@ page.open(address, function(status) {
                 title = results[i].querySelector('h3') ? results[i].querySelector('h3').textContent : 'no title';
                 info = results[i].querySelector('div') ? results[i].querySelector('div').textContent : 'no info';
                 link = results[i].querySelector('a') ? results[i].querySelector('a').getAttribute('href') : 'no link';
-                pic = results[i].querySelector('img') ? results[i].querySelector('img').getAttribute('src') : 'no pic';
+                pic = results[i].querySelector('img') ? results[i].querySelector('img').getAttribute('src') : '';
 
                 // 将信息添加到数组dataList中。
                 dataList.push(
