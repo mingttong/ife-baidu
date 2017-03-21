@@ -7,7 +7,7 @@ const phantom = require('phantom');
 async function task(arg_key, arg_device) {
 
     const instance = await phantom.create();
-    const page = instance.createPage();
+    const page = await instance.createPage();
     const fs = require('fs');
 
     let address = 'http://baidu.com',
@@ -96,11 +96,15 @@ async function task(arg_key, arg_device) {
      * 从配置文件中获取设备信息
      **************************/
 
+    /***************************
+     * 先舍弃这部分
+     */
+
 // 如果不是pc，则去配置设备信息
     if (device !== 'pc') {
 
         // 检查配置文件是否存在
-        if (fs.exists('config.json')) {
+        if (await fs.access('config.json')) {
 
             var config_json = JSON.parse(fs.read('config.json')),
 
@@ -144,82 +148,83 @@ async function task(arg_key, arg_device) {
     /*****************************
      * 开始加载页面
      *****************************/
-    page.open(address, function (status) {
+    const status = await page.open(address); // page.open
 
-        // 如果无法访问到页面，则报错退出
-        if (status !== 'success') {
+    // 如果无法访问到页面，则报错退出
+    if (status !== 'success') {
 
-            errExit('FAIL to load the address');
+        errExit('FAIL to load the address');
+
+    } else {
+
+        dataList = await page.evaluate(function () {
+
+            var results = document.querySelectorAll('.c-container'),
+                dataList = [],
+                i,
+                title,
+                info,
+                link,
+                pic;
+
+            if (!results.length) {
+                // 没找到节点
+
+                return null;
+            }
+
+            for (i = 0; i < results.length; i += 1) {
+                // 当前结果元素下
+
+                title = results[i].querySelector('h3') ? results[i].querySelector('h3').textContent : 'no title';
+                info = results[i].querySelector('div') ? results[i].querySelector('div').textContent : 'no info';
+                link = results[i].querySelector('a') ? results[i].querySelector('a').getAttribute('href') : 'no link';
+                pic = results[i].querySelector('img') ? results[i].querySelector('img').getAttribute('src') : 'no pic';
+
+                // 将信息添加到数组dataList中。
+                dataList.push(
+                    {
+                        title: title,
+                        info: info,
+                        link: link,
+                        pic: pic
+                    }
+                );
+
+            }
+
+            return dataList;
+
+        });
+
+        // 计时停止
+        time = Date.now() - time;
+
+        // 检查抓取的结果
+        if (dataList) {
+
+            result_json = {
+                code: 1,
+                msg: '抓取成功',
+                device: device,
+                word: word,
+                time: time,
+                dataList: dataList
+            };
 
         } else {
 
-            dataList = page.evaluate(function () {
-
-                var results = document.querySelectorAll('.c-container'),
-                    dataList = [],
-                    i,
-                    title,
-                    info,
-                    link,
-                    pic;
-
-                if (!results.length) {
-                    // 没找到节点
-
-                    return null;
-                }
-
-                for (i = 0; i < results.length; i += 1) {
-                    // 当前结果元素下
-
-                    title = results[i].querySelector('h3') ? results[i].querySelector('h3').textContent : 'no title';
-                    info = results[i].querySelector('div') ? results[i].querySelector('div').textContent : 'no info';
-                    link = results[i].querySelector('a') ? results[i].querySelector('a').getAttribute('href') : 'no link';
-                    pic = results[i].querySelector('img') ? results[i].querySelector('img').getAttribute('src') : 'no pic';
-
-                    // 将信息添加到数组dataList中。
-                    dataList.push(
-                        {
-                            title: title,
-                            info: info,
-                            link: link,
-                            pic: pic
-                        }
-                    );
-
-                }
-
-                return dataList;
-
-            });
-
-            // 计时停止
-            time = Date.now() - time;
-
-            // 检查抓取的结果
-            if (dataList) {
-
-                result_json = {
-                    code: 1,
-                    msg: '抓取成功',
-                    device: device,
-                    word: word,
-                    time: time,
-                    dataList: dataList
-                };
-
-            } else {
-
-                errExit('FAIL to catch data');
-            }
-
-            // 来张照片
-            page.render('result/' + word + '.png');
-            // 顺便美化一下JSON的输出
-            console.log(JSON.stringify(result_json, trim, 4));
-            phantom.exit();
-
+            errExit('FAIL to catch data');
         }
-    }); // page.open
+
+        // 来张照片
+        page.render('result/' + word + '.png');
+        // 顺便美化一下JSON的输出
+        console.log(JSON.stringify(result_json, trim, 4));
+        instance.exit();
+
+    }
 
 }
+
+task('clara', 'iphone5');
