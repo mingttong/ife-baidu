@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8"/>
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+<style>
+    input {
+        outline: medium;
+    }
+    
+    button {
+        background: #2a7ae2;
+        color: #ffffff;
+        width: 100px;
+        outline: medium;
+        border: none;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+    }
+
+    table {
+        table-layout: fixed;
+        width: 1200px;
+    }
+
+    tr {
+        width: 100%;
+    }
+</style>
+<body>
+
+<label for="kw">关键字：</label>
+<input type="text" id="kw"/>
+
+<label for="device">设备：</label>
+<select name="device" id="device">
+    <option value="pc">PC</option>
+    <option value="iphone5">iphone5</option>
+    <option value="iphone6">iphone6</option>
+    <option value="ipad">ipad</option>
+</select>
+
+<button id="su">搜索</button>
+
+<br/>
+
+<i class="tip"></i>
+
+<br/>
+
+<div id="result"></div>
+
+<script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script>
+    var su = $('#su');
+    var resultPlace = document.querySelector('#result');
+
+    su.click(function () {
+
+        if (resultPlace.firstElementChild) {
+
+            resultPlace.removeChild(resultPlace.firstElementChild);
+
+        }
+
+        // 关键字
+        var kw = $('#kw').val(),
+        // 设备
+                device = $('#device').val(),
+        // 输入提示
+                tip = document.querySelector('.tip');
+
+        tip.style.color = 'red';
+
+        if (!kw) {
+
+            tip.textContent = '请输入关键字';
+
+        } else {
+
+            tip.textContent = '';
+
+            var url = `http://127.0.0.1:8000/s?key=${kw}&device=${device}`;
+
+            //// 获取数据
+            $.getJSON(url, function(result) {
+
+                if (result.code) {
+
+                    var datalist = result.dataList;
+                    var i;
+
+                    var table = document.createElement('table');
+                    table.setAttribute('border', '1px solid #ccc');
+
+                    var tr = document.createElement('tr');
+
+                    var th1 = document.createElement('th');
+                    th1.textContent = 'title';
+
+                    var th2 = document.createElement('th');
+                    th2.textContent = 'info';
+
+                    var th3 = document.createElement('th');
+                    th3.textContent = 'link';
+
+                    var th4 = document.createElement('th');
+                    th4.textContent = 'pic';
+
+
+                    tr.appendChild(th1);
+                    tr.appendChild(th2);
+                    tr.appendChild(th3);
+                    tr.appendChild(th4);
+
+                    table.appendChild(tr);
+
+
+                    for (i = 0; i < datalist.length; i += 1) {
+
+                        var info = datalist[i].info;
+                        var link = datalist[i].link;
+                        var pic = datalist[i].pic;
+                        var title = datalist[i].title;
+
+                        tr = document.createElement('tr');
+
+                        var td1 = document.createElement('td');
+                        var td2 = document.createElement('td');
+                        var td3 = document.createElement('td');
+                        var td4 = document.createElement('td');
+
+                        td1.textContent = title;
+                        td2.textContent = info;
+                        td3.textContent = link;
+
+                        var img4 = document.createElement('img');
+                        img4.setAttribute('src', pic);
+
+                        td4.appendChild(img4);
+
+                        tr.appendChild(td1);
+                        tr.appendChild(td2);
+                        tr.appendChild(td3);
+                        tr.appendChild(td4);
+
+                        table.appendChild(tr);
+
+                    }
+
+                    resultPlace.appendChild(table);
+
+                }
+
+            });
+
+        }
+
+    });
+</script>
+</body>
+</html>

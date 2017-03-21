@@ -5,6 +5,7 @@
 const PORT = 8000;
 
 const url = require('url');
+const fs = require('fs');
 
 const Koa = require('koa');
 const Router = require('koa-router');
@@ -50,11 +51,29 @@ db.on('error', console.error.bind(console, 'connection error:'));
  * mongoose end
  **********************************/
 
+// show index
+
+const showIndex = async () => {
+
+    return new Promise( (resolve, reject) => {
+
+        fs.readFile('index.html', 'utf8', (err, data) => {
+            if (err) {
+                throw err;
+            }
+
+            resolve(data);
+        })
+
+    });
+
+};
+
 // router
 
 router.get('', async function (ctx, next) {
 
-    await ctx.render('index');
+    ctx.body = await showIndex();
 
 });
 
